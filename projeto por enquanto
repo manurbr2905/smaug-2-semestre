@@ -1,0 +1,86 @@
+import pygame
+import itens
+
+from pygame.locals import *
+
+high = 600
+L = 800
+gover = True
+cair = False
+game = True
+mov = 1
+speed = 4
+
+pygame.init()
+win = pygame.display.set_mode((L, high))
+Prot = pygame.image.load('P.png')
+Prot = pygame.transform.scale(Prot, (32, 32))
+cena = pygame.image.load('BGP.png')
+piso = pygame.image.load('Chãop.png')
+asas = 0
+vel_y = 0
+vel_x = 0
+pts = 0
+top = 0
+
+
+#objetos
+ply = itens.Itens(win, 200, high / 3, 50, 50, Prot, 0)
+fundo0 = itens.Itens(win,0, 0,0,0, cena, 0)
+piso0 = itens.Itens(win,0, 400,0,0, piso, 0)
+
+def paint():
+    global asas
+    pygame.display.update()
+    pygame.time.delay(10)
+    win.fill(0x3C2EE)
+
+    # movendo cenario
+    global fundo0
+    if fundo0.x < -L:
+        fundo0.x = 0
+
+
+    fundo0.show()
+
+    global piso0
+    if piso0.x < -L:
+        piso0.x = 0
+
+
+    piso0.show()
+
+    ply.show()
+
+
+
+
+def control():
+    global gover, vel_y, mov, cair, vel_x
+    mov = not gover
+
+    vel_y += mov
+    ply.y += mov * vel_y
+    ply.r = mov * (-vel_y) * 3
+    vel_x += 0
+    ply.x = mov * vel_x
+    ply.r = mov * (-vel_x) * 3
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+            return  False
+        if event.type == KEYDOWN and event.key == K_SPACE and gover:
+            gover = False
+        if event.type == KEYDOWN and event.key == K_UP:
+            vel_y = mov * -20
+        if vel_y <= -20:
+            vel_y = -20
+        comandos = pygame.key.get_pressed()
+        if comandos[pygame.K_RIGHT]:
+            vel_x += mov * 20
+        if comandos[pygame.K_LEFT]:
+            vel_x -= mov * 20
+    return True
+
+while game:
+    paint()
+    game = control()
