@@ -1,0 +1,88 @@
+import pygame
+pygame.init()
+
+#variaveis
+x = 1280
+y = 920
+Px = 640
+Py = 480
+HitboxX = 650
+HitboxY = 583
+P_vel = 10
+win = pygame.display.set_mode((x, y))
+pygame.display.set_caption("Akuma no Egao")
+janela_aberta = True
+isJump = False
+JumpCount = 10
+#objetos
+
+BG = pygame.image.load('BGP.png')
+BG = pygame.transform.scale(BG, (x, y))
+GROUND = pygame.image.load('Chãop.png')
+GROUND = pygame.transform.scale(GROUND, (1280, 320))
+Prot = pygame.image.load('P.png')
+Prot = pygame.transform.scale(Prot, (128, 128))
+hitbox = pygame.image.load('hitbox.png')
+hitbox = pygame.transform.scale(hitbox, (90, 25))
+
+
+
+while janela_aberta:
+    pygame.time.delay(50)
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            janela_aberta = False
+
+
+
+    comandos = pygame.key.get_pressed()
+
+    if comandos[pygame.K_d]:
+        Px += P_vel
+        HitboxX += P_vel
+    if comandos[pygame.K_a]:
+        Px -= P_vel
+        HitboxX -= P_vel
+
+    if not isJump:
+        if comandos[pygame.K_SPACE]:
+            isJump = True
+    else:
+        if JumpCount >= -30:
+            neg = 1
+            if JumpCount < 0:
+                neg = -1
+            Py -= (JumpCount ** 2) /2 * neg
+            HitboxY -= (JumpCount ** 2) / 2 * neg
+            JumpCount -= 1
+        else:
+
+            JumpCount = 10
+
+
+
+
+
+
+
+    win.blit(BG, (0,0))
+    ground = win.blit(GROUND, (0, 620))
+    prot = win.blit(Prot, (Px, Py))
+    HITBOX = win.blit(hitbox, (HitboxX, HitboxY))
+
+    if prot.colliderect(ground):
+        Py -= 5
+        isJump = False
+        JumpCount = 10
+    if HITBOX.colliderect(ground):
+        HitboxY -= 5
+
+
+
+
+
+    pygame.display.update()
+
+
+pygame.quit()
